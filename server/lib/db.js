@@ -3,16 +3,34 @@
 // sheetsDb.js directly — so switching backends is a pure .env change with
 // zero code changes anywhere else.
 //
-//  - GOOGLE_SHEET_ID set (and STORAGE_BACKEND not forced to "local")
+//  - GOOGLE_SHEET_ID *and* full service-account credentials are present
+//    (and STORAGE_BACKEND isn't forced to "local")
 //      -> Google Sheets is the database (sheetsDb.js)
 //  - otherwise
 //      -> local JSON files under data/ (localDb.js), the original default
 //
+// Auto-detection deliberately requires the *whole* Sheets config to be
+// present before switching — e.g. while someone is halfway through the
+// README's Google Sheets setup and has only pasted GOOGLE_SHEET_ID so far,
+// the app keeps running on local files instead of refusing to start.
 // STORAGE_BACKEND can be set explicitly to "local" or "sheets" in .env to
-// override the auto-detection above (e.g. to force local even if a
-// GOOGLE_SHEET_ID is present, while testing).
-const backend = process.env.STORAGE_BACKEND
-  ? process.env.STORAGE_BACKEND === 'sheets'
-  : Boolean(process.env.GOOGLE_SHEET_ID);
+// override this: forcing "sheets" with incomplete credentials fails loudly
+// on purpose (useful while debugging that setup), forcing "local" ignores
+// any GOOGLE_SHEET_ID present.
+function hasSheetsCredentials() {
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) return true;
+  return Boolean(process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY);
+}
 
-module.exports = backend ? require('./sheetsDb') : require('./localDb');
+const forced = process.env.STORAGE_BACKEND;
+const useSheets =
+  forced === 'sheets'
+    ? true
+    : forced === 'local'
+    ? false
+    : Boolean(process.env.GOOGLE_SHEET_ID) && hasSheetsCredentials();
+
+module.exports = {
+  ...(useSheets ? require('./sheetsDb') : require('./localDb')),
+  backendName: useSheets ? 'sheets' : 'local',
+};

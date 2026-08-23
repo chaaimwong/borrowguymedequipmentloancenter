@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 
-const { ensureFile } = require('./lib/db');
+const { ensureFile, backendName } = require('./lib/db');
 const { requireAuth } = require('./middleware/auth');
 const { UPLOAD_ROOT } = require('./lib/upload');
 
@@ -16,7 +16,7 @@ const auditRoutes = require('./routes/audit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const usingSheets = process.env.STORAGE_BACKEND ? process.env.STORAGE_BACKEND === 'sheets' : Boolean(process.env.GOOGLE_SHEET_ID);
+const usingSheets = backendName === 'sheets';
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -67,6 +67,11 @@ async function start() {
       ['borrowers', 'equipment', 'records', 'requests', 'users', 'audit_log'].map((f) => ensureFile(f, []))
     );
   } catch (e) {
+    // Only reachable when Sheets config looks complete (GOOGLE_SHEET_ID +
+    // credentials all present — see db.js) but is actually wrong, e.g. bad
+    // key or the sheet wasn't shared with the service account. An
+    // incomplete config (only GOOGLE_SHEET_ID set so far) never gets here —
+    // db.js falls back to local storage automatically until setup is done.
     console.error('ไม่สามารถเตรียมฐานข้อมูลได้ตอนเริ่มระบบ:', e.message);
     if (usingSheets) {
       console.error('ตรวจสอบ GOOGLE_SHEET_ID / GOOGLE_SERVICE_ACCOUNT_EMAIL / GOOGLE_PRIVATE_KEY ใน .env และตรวจว่าได้แชร์ชีตให้ service account เป็น Editor แล้ว (ดู README)');

@@ -2,9 +2,10 @@
 // Safe to run multiple times.
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
-const { db, ensureFile } = require('./lib/db');
+const { db, ensureFile, backendName } = require('./lib/db');
 
 async function seed() {
+  console.log(`โหมดจัดเก็บข้อมูล: ${backendName === 'sheets' ? 'Google Sheets' : 'ไฟล์ JSON local (data/)'}`);
   await Promise.all(
     ['borrowers', 'equipment', 'records', 'requests', 'users', 'audit_log'].map((f) => ensureFile(f, []))
   );
