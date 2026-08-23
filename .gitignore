@@ -1,0 +1,10 @@
+node_modules/
+.env
+data/.encryption_key
+# Google service-account key files, in case one gets downloaded/pasted into the project
+*service-account*.json
+credentials.json
+uploads/id_cards/*
+uploads/illness_photos/*
+!uploads/id_cards/.gitkeep
+!uploads/illness_photos/.gitkeep

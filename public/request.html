@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ส่งคำขอยืมกายอุปกรณ์การแพทย์</title>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <a href="/" class="brand" style="color:white;"><span class="dot"></span>ศูนย์ยืม-คืนกายอุปกรณ์</a>
+  </header>
+
+  <div class="container" style="padding-top:20px;">
+    <div id="formView">
+      <div class="card">
+        <h1>ส่งคำขอยืมอุปกรณ์</h1>
+        <p style="color:var(--text-muted); margin-top:-6px;">กรอกข้อมูลให้ครบถ้วน เจ้าหน้าที่จะตรวจสอบและติดต่อกลับ ไม่ต้องเข้าสู่ระบบ</p>
+
+        <div id="alertBox"></div>
+
+        <form id="reqForm">
+          <div class="row">
+            <div class="field">
+              <label for="first_name">ชื่อ *</label>
+              <input type="text" id="first_name" required />
+            </div>
+            <div class="field">
+              <label for="last_name">นามสกุล *</label>
+              <input type="text" id="last_name" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="national_id">เลขบัตรประชาชน (13 หลัก) *</label>
+            <input type="text" id="national_id" inputmode="numeric" maxlength="13" placeholder="เช่น 1103700230238" required />
+            <div class="hint" id="nidHint">ใช้สำหรับตรวจสอบสิทธิ์และยืนยันตัวตน ระบบจะเข้ารหัสข้อมูลนี้ก่อนบันทึก</div>
+          </div>
+
+          <div class="field">
+            <label for="address">ที่อยู่ *</label>
+            <textarea id="address" required></textarea>
+          </div>
+
+          <div class="field">
+            <label for="equipment_id">อุปกรณ์ที่ต้องการยืม *</label>
+            <select id="equipment_id" required>
+              <option value="">-- เลือกอุปกรณ์ --</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="illness_description">อธิบายอาการเพิ่มเติม</label>
+            <textarea id="illness_description" placeholder="เช่น ขาอ่อนแรง เดินลำบาก ต้องใช้พยุงเดิน"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="illness_photo">ภาพประกอบอาการป่วย (ถ้ามี)</label>
+            <input type="file" id="illness_photo" accept="image/*" capture="environment" />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="submitBtn">ส่งคำขอยืม</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="doneView" class="hidden">
+      <div class="card" style="text-align:center;">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h2>ส่งคำขอเรียบร้อยแล้ว</h2>
+        <p style="color:var(--text-muted);">หมายเลขคำขอของคุณคือ <strong id="reqIdOut"></strong><br />เจ้าหน้าที่จะตรวจสอบและติดต่อกลับเพื่อนัดรับอุปกรณ์</p>
+        <button class="btn btn-secondary" onclick="location.reload()">ส่งคำขอใหม่</button>
+      </div>
+    </div>
+
+    <p class="footer-note">สำหรับเจ้าหน้าที่ <a href="/staff.html">เข้าสู่ระบบที่นี่</a> · <a href="/">กลับหน้าแรก</a></p>
+  </div>
+
+<script src="/js/request.js"></script>
+</body>
+</html>
